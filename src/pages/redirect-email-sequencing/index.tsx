@@ -1,8 +1,6 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
-type Props = {};
-
-const RedirectEmailSequencing = (props: Props) => {
+const RedirectEmailSequencing = () => {
   // get the email from the query
   const email = new URLSearchParams(window.location.search).get("email");
 
