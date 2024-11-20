@@ -1,23 +1,32 @@
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const RedirectEmailSequencing = () => {
-  // get the email from the query
-  const email = new URLSearchParams(window.location.search).get("email");
+  const location = useLocation();
 
   // get the redirect url from the query
-  const redirectUrl = new URLSearchParams(window.location.search).get(
-    "redirectUrl"
-  );
+  const redirectUrl = new URLSearchParams(location.search).get("state");
 
   useEffect(() => {
-    if (email && redirectUrl) {
-      //   window.location.href = redirectUrl;
-      console.log(window.location.href?.split("?")[1]);
-    }
-  }, [email, redirectUrl]);
+    if (redirectUrl) {
+      // Construct the full URL with original query parameters
+      const fullRedirectUrl = new URL(redirectUrl, window.location.origin);
 
-  console.log(email, redirectUrl);
-  return <div>Redirecting to {redirectUrl}</div>;
+      // Copy all original query parameters to the new URL
+      const searchParams = new URLSearchParams(location.search);
+      searchParams.delete("state"); // Remove the redirectUrl param itself
+
+      // Append remaining query params to the redirect URL
+      searchParams.forEach((value, key) => {
+        fullRedirectUrl.searchParams.append(key, value);
+      });
+
+      // Navigate to the constructed URL
+      window.location.href = fullRedirectUrl.toString();
+    }
+  }, [redirectUrl, location.search]);
+
+  return <div>Redirecting to {redirectUrl}...</div>;
 };
 
 export default RedirectEmailSequencing;
